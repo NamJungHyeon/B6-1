@@ -1,0 +1,10 @@
+# [B2-b] 대여 기록이 있는 회원(1번)을 삭제 시도 → FK 에러
+
+-- [B2-b] 대여 기록이 있는 회원(1번)을 삭제 시도 → FK 에러
+DELETE FROM member WHERE id = 1;
+-- 결과: Error: FOREIGN KEY constraint failed
+-- 이유: rental 에 member_id = 1 인 기록이 남아 있다. 부모를 지우면 자식이 고아가 된다.
+--       (review 는 ON DELETE CASCADE 라 같이 지워지지만, rental 은 기본값 NO ACTION 이라 막힌다.)
+-- 해결: 대여 기록을 보존해야 하므로 회원을 물리 삭제하지 말고, 탈퇴 여부 컬럼을 두는 식의
+--       논리 삭제가 적절하다. 정말 지워야 한다면 자식(rental)을 먼저 정리한다.
+Error near line 6: FOREIGN KEY constraint failed

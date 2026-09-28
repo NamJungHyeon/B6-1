@@ -1,0 +1,18 @@
+# [Q13] 월별 대여 건수 추이 (COUNT + GROUP BY)
+
+-- [Q13] 월별 대여 건수 추이 (COUNT + GROUP BY)
+-- [SQLite 전용] SUBSTR — 표준 SQL 은 SUBSTRING(rented_at FROM 1 FOR 7),
+--               MySQL 은 DATE_FORMAT, PostgreSQL 은 TO_CHAR 를 주로 쓴다.
+SELECT SUBSTR(rented_at, 1, 7) AS rent_month,
+       COUNT(*)                AS rental_count
+FROM rental
+GROUP BY SUBSTR(rented_at, 1, 7)
+ORDER BY rent_month;
+╭────────────┬──────────────╮
+│ rent_month │ rental_count │
+╞════════════╪══════════════╡
+│ 2026-06    │            3 │
+│ 2026-07    │            5 │
+│ 2026-08    │            8 │
+│ 2026-09    │            9 │
+╰────────────┴──────────────╯

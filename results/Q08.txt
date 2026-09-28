@@ -1,0 +1,24 @@
+# [Q08] 모든 회원의 대여 횟수 — 한 번도 안 빌린 회원도 0으로 표시 (LEFT JOIN)
+
+-- [Q08] 모든 회원의 대여 횟수 — 한 번도 안 빌린 회원도 0으로 표시 (LEFT JOIN)
+SELECT m.id, m.name, COUNT(r.id) AS rental_count
+FROM member m
+LEFT JOIN rental r ON r.member_id = m.id
+GROUP BY m.id, m.name
+ORDER BY rental_count DESC, m.id;
+╭────┬────────┬──────────────╮
+│ id │  name  │ rental_count │
+╞════╪════════╪══════════════╡
+│  1 │ 김민지 │            4 │
+│  2 │ 이준호 │            3 │
+│  3 │ 박서준 │            3 │
+│  5 │ 정하은 │            3 │
+│  4 │ 최유나 │            2 │
+│  6 │ 강도현 │            2 │
+│  7 │ 윤지아 │            2 │
+│  8 │ 임태윤 │            2 │
+│  9 │ 한소율 │            2 │
+│ 10 │ 오건우 │            2 │
+│ 11 │ 서예린 │            0 │
+│ 12 │ 문재원 │            0 │
+╰────┴────────┴──────────────╯

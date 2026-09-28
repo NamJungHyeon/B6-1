@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="520" viewBox="0 0 1120 520" font-family="-apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">
+<rect width="1120" height="520" fill="#ffffff"/>
+<style>.t{font-size:14px;font-weight:700;fill:#fff}.c{font-size:12px;fill:#1f2933}.ty{font-size:11px;fill:#52606d}.k{font-size:10px;font-weight:700}.pk{fill:#b7791f}.fk{fill:#2b6cb0}.o{fill:#7b8794}.card{font-size:13px;font-weight:700;fill:#c53030}.ln{stroke:#4a5568;stroke-width:1.6;fill:none}</style>
+<rect x="20" y="60" width="240" height="106" rx="6" fill="#f8fafc" stroke="#334e68" stroke-width="1.5"/>
+<path d="M20 66 a6 6 0 0 1 6 -6 h228 a6 6 0 0 1 6 6 v24 h-240 z" fill="#334e68"/>
+<text x="32" y="80" class="t">category</text>
+<text x="30" y="110.0" class="k pk">PK</text>
+<text x="82" y="110.0" class="c">id</text>
+<text x="250" y="110.0" class="ty" text-anchor="end">INTEGER</text>
+<text x="30" y="132.0" class="k o">UQ, NN</text>
+<text x="82" y="132.0" class="c">name</text>
+<text x="250" y="132.0" class="ty" text-anchor="end">VARCHAR(50)</text>
+<text x="30" y="154.0" class="k o"></text>
+<text x="82" y="154.0" class="c">description</text>
+<text x="250" y="154.0" class="ty" text-anchor="end">VARCHAR(200)</text>
+<rect x="300" y="60" width="240" height="216" rx="6" fill="#f8fafc" stroke="#334e68" stroke-width="1.5"/>
+<path d="M300 66 a6 6 0 0 1 6 -6 h228 a6 6 0 0 1 6 6 v24 h-240 z" fill="#334e68"/>
+<text x="312" y="80" class="t">book</text>
+<text x="310" y="110.0" class="k pk">PK</text>
+<text x="362" y="110.0" class="c">id</text>
+<text x="530" y="110.0" class="ty" text-anchor="end">INTEGER</text>
+<text x="310" y="132.0" class="k fk">FK</text>
+<text x="362" y="132.0" class="c">category_id</text>
+<text x="530" y="132.0" class="ty" text-anchor="end">INTEGER</text>
+<text x="310" y="154.0" class="k o">NN</text>
+<text x="362" y="154.0" class="c">title</text>
+<text x="530" y="154.0" class="ty" text-anchor="end">VARCHAR(200)</text>
+<text x="310" y="176.0" class="k o">NN</text>
+<text x="362" y="176.0" class="c">author</text>
+<text x="530" y="176.0" class="ty" text-anchor="end">VARCHAR(100)</text>
+<text x="310" y="198.0" class="k o">UQ, NN</text>
+<text x="362" y="198.0" class="c">isbn</text>
+<text x="530" y="198.0" class="ty" text-anchor="end">VARCHAR(20)</text>
+<text x="310" y="220.0" class="k o"></text>
+<text x="362" y="220.0" class="c">published_year</text>
+<text x="530" y="220.0" class="ty" text-anchor="end">INTEGER</text>
+<text x="310" y="242.0" class="k o">NN</text>
+<text x="362" y="242.0" class="c">price</text>
+<text x="530" y="242.0" class="ty" text-anchor="end">INTEGER</text>
+<text x="310" y="264.0" class="k o">NN</text>
+<text x="362" y="264.0" class="c">stock</text>
+<text x="530" y="264.0" class="ty" text-anchor="end">INTEGER</text>
+<rect x="580" y="20" width="240" height="216" rx="6" fill="#f8fafc" stroke="#334e68" stroke-width="1.5"/>
+<path d="M580 26 a6 6 0 0 1 6 -6 h228 a6 6 0 0 1 6 6 v24 h-240 z" fill="#334e68"/>
+<text x="592" y="40" class="t">rental</text>
+<text x="590" y="70.0" class="k pk">PK</text>
+<text x="642" y="70.0" class="c">id</text>
+<text x="810" y="70.0" class="ty" text-anchor="end">INTEGER</text>
+<text x="590" y="92.0" class="k fk">FK</text>
+<text x="642" y="92.0" class="c">member_id</text>
+<text x="810" y="92.0" class="ty" text-anchor="end">INTEGER</text>
+<text x="590" y="114.0" class="k fk">FK</text>
+<text x="642" y="114.0" class="c">book_id</text>
+<text x="810" y="114.0" class="ty" text-anchor="end">INTEGER</text>
+<text x="590" y="136.0" class="k o">NN</text>
+<text x="642" y="136.0" class="c">rented_at</text>
+<text x="810" y="136.0" class="ty" text-anchor="end">DATE</text>
+<text x="590" y="158.0" class="k o">NN</text>
+<text x="642" y="158.0" class="c">due_date</text>
+<text x="810" y="158.0" class="ty" text-anchor="end">DATE</text>
+<text x="590" y="180.0" class="k o"></text>
+<text x="642" y="180.0" class="c">returned_at</text>
+<text x="810" y="180.0" class="ty" text-anchor="end">DATE</text>
+<text x="590" y="202.0" class="k o">NN</text>
+<text x="642" y="202.0" class="c">status</text>
+<text x="810" y="202.0" class="ty" text-anchor="end">VARCHAR(10)</text>
+<text x="590" y="224.0" class="k o">NN</text>
+<text x="642" y="224.0" class="c">late_fee</text>
+<text x="810" y="224.0" class="ty" text-anchor="end">INTEGER</text>
+<rect x="580" y="290" width="240" height="172" rx="6" fill="#f8fafc" stroke="#334e68" stroke-width="1.5"/>
+<path d="M580 296 a6 6 0 0 1 6 -6 h228 a6 6 0 0 1 6 6 v24 h-240 z" fill="#334e68"/>
+<text x="592" y="310" class="t">review</text>
+<text x="590" y="340.0" class="k pk">PK</text>
+<text x="642" y="340.0" class="c">id</text>
+<text x="810" y="340.0" class="ty" text-anchor="end">INTEGER</text>
+<text x="590" y="362.0" class="k fk">FK</text>
+<text x="642" y="362.0" class="c">member_id</text>
+<text x="810" y="362.0" class="ty" text-anchor="end">INTEGER</text>
+<text x="590" y="384.0" class="k fk">FK</text>
+<text x="642" y="384.0" class="c">book_id</text>
+<text x="810" y="384.0" class="ty" text-anchor="end">INTEGER</text>
+<text x="590" y="406.0" class="k o">NN 1~5</text>
+<text x="642" y="406.0" class="c">rating</text>
+<text x="810" y="406.0" class="ty" text-anchor="end">INTEGER</text>
+<text x="590" y="428.0" class="k o"></text>
+<text x="642" y="428.0" class="c">content</text>
+<text x="810" y="428.0" class="ty" text-anchor="end">VARCHAR(500)</text>
+<text x="590" y="450.0" class="k o">NN</text>
+<text x="642" y="450.0" class="c">created_at</text>
+<text x="810" y="450.0" class="ty" text-anchor="end">DATETIME</text>
+<rect x="860" y="150" width="240" height="172" rx="6" fill="#f8fafc" stroke="#334e68" stroke-width="1.5"/>
+<path d="M860 156 a6 6 0 0 1 6 -6 h228 a6 6 0 0 1 6 6 v24 h-240 z" fill="#334e68"/>
+<text x="872" y="170" class="t">member</text>
+<text x="870" y="200.0" class="k pk">PK</text>
+<text x="922" y="200.0" class="c">id</text>
+<text x="1090" y="200.0" class="ty" text-anchor="end">INTEGER</text>
+<text x="870" y="222.0" class="k o">NN</text>
+<text x="922" y="222.0" class="c">name</text>
+<text x="1090" y="222.0" class="ty" text-anchor="end">VARCHAR(50)</text>
+<text x="870" y="244.0" class="k o">UQ, NN</text>
+<text x="922" y="244.0" class="c">email</text>
+<text x="1090" y="244.0" class="ty" text-anchor="end">VARCHAR(100)</text>
+<text x="870" y="266.0" class="k o"></text>
+<text x="922" y="266.0" class="c">phone</text>
+<text x="1090" y="266.0" class="ty" text-anchor="end">VARCHAR(20)</text>
+<text x="870" y="288.0" class="k o">NN</text>
+<text x="922" y="288.0" class="c">grade</text>
+<text x="1090" y="288.0" class="ty" text-anchor="end">VARCHAR(10)</text>
+<text x="870" y="310.0" class="k o">NN</text>
+<text x="922" y="310.0" class="c">joined_at</text>
+<text x="1090" y="310.0" class="ty" text-anchor="end">DATE</text>
+<path d="M260 106.0 L280 106.0 L280 128.0 L300 128.0" class="ln"/>
+<text x="263" y="101.0" class="card">1</text>
+<text x="288" y="123.0" class="card">N</text>
+<path d="M540 106.0 L560 106.0 L560 110.0 L580 110.0" class="ln"/>
+<text x="543" y="101.0" class="card">1</text>
+<text x="567" y="105.0" class="card">N</text>
+<path d="M540 106.0 L560 106.0 L560 380.0 L580 380.0" class="ln"/>
+<text x="543" y="101.0" class="card">1</text>
+<text x="567" y="375.0" class="card">N</text>
+<path d="M860 196.0 L835 196.0 L835 88.0 L820 88.0" class="ln"/>
+<text x="847" y="191.0" class="card">1</text>
+<text x="822" y="83.0" class="card">N</text>
+<path d="M860 196.0 L845 196.0 L845 358.0 L820 358.0" class="ln"/>
+<text x="847" y="191.0" class="card">1</text>
+<text x="822" y="353.0" class="card">N</text>
+<text x="20" y="505" class="ty">PK 기본키 · FK 외래키 · UQ UNIQUE · NN NOT NULL   |   1:N — category→book, member→rental, book→rental, member→review, book→review</text>
+</svg>

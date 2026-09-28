@@ -1,0 +1,33 @@
+# [Q16] 반납 기한이 지났는데 아직 RENTED 인 대여를 OVERDUE 로 변경 (UPDATE)
+
+-- [Q16] 반납 기한이 지났는데 아직 RENTED 인 대여를 OVERDUE 로 변경 (UPDATE)
+-- 변경 전
+SELECT id, member_id, due_date, status
+FROM rental
+WHERE status = 'RENTED' AND due_date < '2026-09-28';
+╭────┬───────────┬────────────┬────────╮
+│ id │ member_id │  due_date  │ status │
+╞════╪═══════════╪════════════╪════════╡
+│ 19 │         1 │ 2026-09-19 │ RENTED │
+│ 20 │         6 │ 2026-09-22 │ RENTED │
+╰────┴───────────┴────────────┴────────╯
+
+UPDATE rental
+SET status = 'OVERDUE'
+WHERE status = 'RENTED'
+  AND returned_at IS NULL
+  AND due_date < '2026-09-28';
+
+-- 변경 후 (연체 상태 전체)
+SELECT id, member_id, due_date, status
+FROM rental
+WHERE status = 'OVERDUE'
+ORDER BY id;
+╭────┬───────────┬────────────┬─────────╮
+│ id │ member_id │  due_date  │ status  │
+╞════╪═══════════╪════════════╪═════════╡
+│ 15 │         2 │ 2026-09-03 │ OVERDUE │
+│ 16 │         3 │ 2026-09-08 │ OVERDUE │
+│ 19 │         1 │ 2026-09-19 │ OVERDUE │
+│ 20 │         6 │ 2026-09-22 │ OVERDUE │
+╰────┴───────────┴────────────┴─────────╯

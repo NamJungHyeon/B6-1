@@ -1,0 +1,24 @@
+# [B3-3] 회원별 연체율 (연체 발생 건수 / 전체 대여 건수)
+
+-- [B3-3] 회원별 연체율 (연체 발생 건수 / 전체 대여 건수)
+-- 연체 = 늦게 반납(late_fee > 0) 했거나 현재 OVERDUE 인 대여
+SELECT m.name,
+       COUNT(*) AS rental_count,
+       SUM(CASE WHEN r.late_fee > 0 OR r.status = 'OVERDUE' THEN 1 ELSE 0 END) AS late_count,
+       ROUND(100.0 * SUM(CASE WHEN r.late_fee > 0 OR r.status = 'OVERDUE' THEN 1 ELSE 0 END)
+             / COUNT(*), 1) AS late_rate_pct
+FROM member m
+INNER JOIN rental r ON r.member_id = m.id
+GROUP BY m.id, m.name
+HAVING SUM(CASE WHEN r.late_fee > 0 OR r.status = 'OVERDUE' THEN 1 ELSE 0 END) > 0
+ORDER BY late_rate_pct DESC, late_count DESC;
+╭────────┬──────────────┬────────────┬───────────────╮
+│  name  │ rental_count │ late_count │ late_rate_pct │
+╞════════╪══════════════╪════════════╪═══════════════╡
+│ 박서준 │            3 │          2 │          66.7 │
+│ 김민지 │            4 │          2 │          50.0 │
+│ 강도현 │            2 │          1 │          50.0 │
+│ 임태윤 │            2 │          1 │          50.0 │
+│ 이준호 │            3 │          1 │          33.3 │
+│ 정하은 │            3 │          1 │          33.3 │
+╰────────┴──────────────┴────────────┴───────────────╯

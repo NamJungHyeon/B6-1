@@ -1,0 +1,16 @@
+# [Q03] 가장 최근에 발생한 대여 5건 (ORDER BY + LIMIT)
+
+-- [Q03] 가장 최근에 발생한 대여 5건 (ORDER BY + LIMIT)
+SELECT id, member_id, book_id, rented_at, status
+FROM rental
+ORDER BY rented_at DESC
+LIMIT 5;
+╭────┬───────────┬─────────┬────────────┬────────╮
+│ id │ member_id │ book_id │ rented_at  │ status │
+╞════╪═══════════╪═════════╪════════════╪════════╡
+│ 25 │         5 │       9 │ 2026-09-25 │ RENTED │
+│ 24 │        10 │       6 │ 2026-09-22 │ RENTED │
+│ 23 │         9 │       1 │ 2026-09-20 │ RENTED │
+│ 22 │         8 │       4 │ 2026-09-18 │ RENTED │
+│ 21 │         7 │       2 │ 2026-09-15 │ RENTED │
+╰────┴───────────┴─────────┴────────────┴────────╯

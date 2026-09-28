@@ -1,0 +1,16 @@
+# [Q14] 대여 기록이 한 건도 없는 회원 찾기 (NOT EXISTS 상관 서브쿼리)
+
+-- [Q14] 대여 기록이 한 건도 없는 회원 찾기 (NOT EXISTS 상관 서브쿼리)
+SELECT m.id, m.name, m.joined_at
+FROM member m
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM rental r
+    WHERE r.member_id = m.id
+);
+╭────┬────────┬────────────╮
+│ id │  name  │ joined_at  │
+╞════╪════════╪════════════╡
+│ 11 │ 서예린 │ 2026-08-21 │
+│ 12 │ 문재원 │ 2026-09-10 │
+╰────┴────────┴────────────╯
