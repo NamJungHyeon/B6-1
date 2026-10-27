@@ -1,14 +1,13 @@
 -- =============================================================
--- 01_schema.sql : 도서 대여 서비스 스키마
+-- schema.sql : 도서 대여 서비스 스키마
 -- DB   : SQLite 3
--- 실행 : sqlite3 library.db < sql/01_schema.sql
+-- 실행 : sqlite3 library.db < schema.sql
 --
--- 테이블 (5개)
+-- 테이블 (4개)
 --   category  카테고리
 --   member    회원
 --   book      도서          (category 1 : N book)
 --   rental    대여 기록     (member 1 : N rental, book 1 : N rental)
---   review    도서 리뷰     (member 1 : N review, book 1 : N review)
 -- =============================================================
 
 -- [SQLite 전용] SQLite는 기본적으로 FK 검사가 꺼져 있다.
@@ -16,7 +15,6 @@
 PRAGMA foreign_keys = ON;
 
 -- 재실행 가능하도록 자식 테이블부터 삭제
-DROP TABLE IF EXISTS review;
 DROP TABLE IF EXISTS rental;
 DROP TABLE IF EXISTS book;
 DROP TABLE IF EXISTS member;
@@ -70,16 +68,3 @@ CREATE TABLE rental (
     FOREIGN KEY (book_id)   REFERENCES book (id)
 );
 
--- 5) 리뷰 ------------------------------------------------------
--- 한 회원은 같은 책에 리뷰를 한 번만 남길 수 있다 (복합 UNIQUE)
-CREATE TABLE review (
-    id          INTEGER     PRIMARY KEY,
-    member_id   INTEGER     NOT NULL,
-    book_id     INTEGER     NOT NULL,
-    rating      INTEGER     NOT NULL CHECK (rating BETWEEN 1 AND 5),
-    content     VARCHAR(500),
-    created_at  DATETIME    NOT NULL,
-    UNIQUE (member_id, book_id),
-    FOREIGN KEY (member_id) REFERENCES member (id) ON DELETE CASCADE,
-    FOREIGN KEY (book_id)   REFERENCES book (id)   ON DELETE CASCADE
-);

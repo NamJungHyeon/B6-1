@@ -1,0 +1,276 @@
+-- =============================================================
+-- queries.sql : 핵심 쿼리 15개
+-- DB   : SQLite 3
+-- 실행 : sqlite3 -header -box -echo library.db < queries.sql > results/result.txt
+--        (schema.sql, data.sql 실행 후)
+--
+-- 기준일(오늘)은 2026-09-28 로 고정한다.
+--
+-- 범주            | 쿼리
+-- ----------------+--------------------------
+-- 기본 조회  (4)  | Q01 ~ Q04
+-- 조인       (4)  | Q05 ~ Q08  (INNER 2, LEFT 2)
+-- 집계       (3)  | Q09 ~ Q11
+-- 서브쿼리   (1)  | Q12
+-- 수정/삭제  (2)  | Q13 (UPDATE), Q14 (DELETE)
+-- 인덱스     (1)  | Q15
+--
+-- Q13, Q14 는 데이터를 바꾸므로 한 번만 실행한다.
+-- 다시 돌리려면 schema.sql → data.sql 부터 재실행한다.
+-- =============================================================
+
+PRAGMA foreign_keys = ON;   -- [SQLite 전용]
+
+
+-- ─────────────────────────── 기본 조회 ───────────────────────────
+
+-- [Q01] 2만 5천 원 이상인 도서를 비싼 순으로
+SELECT id, title, author, price
+FROM book
+WHERE price >= 25000
+ORDER BY price DESC;
+╭────┬─────────────────────────────────┬────────┬───────╮
+│ id │              title              │ author │ price │
+╞════╪═════════════════════════════════╪════════╪═══════╡
+│  9 │ 파이썬으로 시작하는 데이터 분석 │ 강태호 │ 32000 │
+│ 13 │ 자료구조와 알고리즘 입문        │ 임현우 │ 30000 │
+│  8 │ 처음 배우는 SQL                 │ 강태호 │ 28000 │
+╰────┴─────────────────────────────────┴────────┴───────╯
+
+-- [Q02] GOLD 등급 회원
+SELECT id, name, grade, joined_at
+FROM member
+WHERE grade = 'GOLD';
+╭────┬────────┬───────┬────────────╮
+│ id │  name  │ grade │ joined_at  │
+╞════╪════════╪═══════╪════════════╡
+│  1 │ 김민지 │ GOLD  │ 2025-03-02 │
+│  5 │ 정하은 │ GOLD  │ 2025-08-11 │
+╰────┴────────┴───────┴────────────╯
+
+-- [Q03] 가장 최근 대여 5건
+SELECT id, member_id, book_id, rented_at, status
+FROM rental
+ORDER BY rented_at DESC
+LIMIT 5;
+╭────┬───────────┬─────────┬────────────┬────────╮
+│ id │ member_id │ book_id │ rented_at  │ status │
+╞════╪═══════════╪═════════╪════════════╪════════╡
+│ 25 │         5 │       9 │ 2026-09-25 │ RENTED │
+│ 24 │        10 │       6 │ 2026-09-22 │ RENTED │
+│ 23 │         9 │       1 │ 2026-09-20 │ RENTED │
+│ 22 │         8 │       4 │ 2026-09-18 │ RENTED │
+│ 21 │         7 │       2 │ 2026-09-15 │ RENTED │
+╰────┴───────────┴─────────┴────────────┴────────╯
+
+-- [Q04] 제목에 'SQL'이 들어간 도서
+SELECT id, title, author
+FROM book
+WHERE title LIKE '%SQL%';
+╭────┬─────────────────┬────────╮
+│ id │      title      │ author │
+╞════╪═════════════════╪════════╡
+│  8 │ 처음 배우는 SQL │ 강태호 │
+╰────┴─────────────────┴────────╯
+
+
+-- ───────────────────────────── 조인 ─────────────────────────────
+
+-- [Q05] 도서 제목과 카테고리 이름 (INNER JOIN)
+SELECT b.title, c.name AS category
+FROM book b
+INNER JOIN category c ON c.id = b.category_id
+ORDER BY b.id;
+╭─────────────────────────────────┬───────────╮
+│              title              │ category  │
+╞═════════════════════════════════╪═══════════╡
+│ 달빛 서점의 비밀                │ 소설      │
+│ 바람이 머무는 곳                │ 소설      │
+│ 오늘도 천천히                   │ 에세이    │
+│ 우주를 여는 열쇠                │ 과학      │
+│ 세포의 시간                     │ 과학      │
+│ 조선의 밤                       │ 역사      │
+│ 작은 습관의 힘                  │ 자기계발  │
+│ 처음 배우는 SQL                 │ 컴퓨터/IT │
+│ 파이썬으로 시작하는 데이터 분석 │ 컴퓨터/IT │
+│ 돈의 흐름을 읽는 법             │ 경제/경영 │
+│ 생각하는 인간                   │ 인문      │
+│ 색채의 언어                     │ 예술      │
+│ 자료구조와 알고리즘 입문        │ 컴퓨터/IT │
+│ 여름의 문장들                   │ 에세이    │
+│ 바다의 제국                     │ 역사      │
+╰─────────────────────────────────┴───────────╯
+
+-- [Q06] 아직 반납하지 않은 대여: 회원 이름 + 책 제목 (INNER JOIN)
+SELECT r.id AS rental_id, m.name AS member_name, b.title AS book_title, r.due_date
+FROM rental r
+INNER JOIN member m ON m.id = r.member_id
+INNER JOIN book   b ON b.id = r.book_id
+WHERE r.returned_at IS NULL
+ORDER BY r.due_date;
+╭───────────┬─────────────┬─────────────────────────────────┬────────────╮
+│ rental_id │ member_name │           book_title            │  due_date  │
+╞═══════════╪═════════════╪═════════════════════════════════╪════════════╡
+│        15 │ 이준호      │ 색채의 언어                     │ 2026-09-03 │
+│        16 │ 박서준      │ 오늘도 천천히                   │ 2026-09-08 │
+│        19 │ 김민지      │ 세포의 시간                     │ 2026-09-19 │
+│        20 │ 강도현      │ 작은 습관의 힘                  │ 2026-09-22 │
+│        21 │ 윤지아      │ 바람이 머무는 곳                │ 2026-09-29 │
+│        22 │ 임태윤      │ 우주를 여는 열쇠                │ 2026-10-02 │
+│        23 │ 한소율      │ 달빛 서점의 비밀                │ 2026-10-04 │
+│        24 │ 오건우      │ 조선의 밤                       │ 2026-10-06 │
+│        25 │ 정하은      │ 파이썬으로 시작하는 데이터 분석 │ 2026-10-09 │
+╰───────────┴─────────────┴─────────────────────────────────┴────────────╯
+
+-- [Q07] 모든 회원의 대여 횟수 — 안 빌린 회원도 0으로 (LEFT JOIN)
+SELECT m.id, m.name, COUNT(r.id) AS rental_count
+FROM member m
+LEFT JOIN rental r ON r.member_id = m.id
+GROUP BY m.id, m.name
+ORDER BY m.id;
+╭────┬────────┬──────────────╮
+│ id │  name  │ rental_count │
+╞════╪════════╪══════════════╡
+│  1 │ 김민지 │            4 │
+│  2 │ 이준호 │            3 │
+│  3 │ 박서준 │            3 │
+│  4 │ 최유나 │            2 │
+│  5 │ 정하은 │            3 │
+│  6 │ 강도현 │            2 │
+│  7 │ 윤지아 │            2 │
+│  8 │ 임태윤 │            2 │
+│  9 │ 한소율 │            2 │
+│ 10 │ 오건우 │            2 │
+│ 11 │ 서예린 │            0 │
+│ 12 │ 문재원 │            0 │
+╰────┴────────┴──────────────╯
+
+-- [Q08] 한 번도 대여되지 않은 도서 (LEFT JOIN + IS NULL)
+SELECT b.id, b.title
+FROM book b
+LEFT JOIN rental r ON r.book_id = b.id
+WHERE r.id IS NULL;
+╭────┬───────────────╮
+│ id │     title     │
+╞════╪═══════════════╡
+│ 14 │ 여름의 문장들 │
+│ 15 │ 바다의 제국   │
+╰────┴───────────────╯
+
+
+-- ───────────────────────────── 집계 ─────────────────────────────
+
+-- [Q09] 상태별 대여 건수 (COUNT + GROUP BY)
+SELECT status, COUNT(*) AS rental_count
+FROM rental
+GROUP BY status;
+╭──────────┬──────────────╮
+│  status  │ rental_count │
+╞══════════╪══════════════╡
+│ OVERDUE  │            2 │
+│ RENTED   │            7 │
+│ RETURNED │           16 │
+╰──────────┴──────────────╯
+
+-- [Q10] 카테고리별 도서 평균 가격 (AVG + GROUP BY)
+SELECT category_id, COUNT(*) AS book_count, AVG(price) AS avg_price
+FROM book
+GROUP BY category_id
+ORDER BY category_id;
+╭─────────────┬────────────┬───────────╮
+│ category_id │ book_count │ avg_price │
+╞═════════════╪════════════╪═══════════╡
+│           1 │          2 │   14250.0 │
+│           2 │          2 │   12500.0 │
+│           3 │          2 │   19500.0 │
+│           4 │          2 │   19250.0 │
+│           5 │          1 │   14000.0 │
+│           6 │          3 │   30000.0 │
+│           7 │          1 │   17000.0 │
+│           8 │          1 │   19000.0 │
+│           9 │          1 │   24000.0 │
+╰─────────────┴────────────┴───────────╯
+
+-- [Q11] 회원별 연체료 합계 (SUM + GROUP BY)
+SELECT member_id, SUM(late_fee) AS total_late_fee
+FROM rental
+GROUP BY member_id
+ORDER BY total_late_fee DESC, member_id;
+╭───────────┬────────────────╮
+│ member_id │ total_late_fee │
+╞═══════════╪════════════════╡
+│         5 │           3000 │
+│         1 │           2000 │
+│         8 │           2000 │
+│         3 │           1500 │
+│         2 │              0 │
+│         4 │              0 │
+│         6 │              0 │
+│         7 │              0 │
+│         9 │              0 │
+│        10 │              0 │
+╰───────────┴────────────────╯
+
+
+-- ─────────────────────────── 서브쿼리 ───────────────────────────
+
+-- [Q12] 전체 평균 가격보다 비싼 도서
+SELECT id, title, price
+FROM book
+WHERE price > (SELECT AVG(price) FROM book)
+ORDER BY price DESC;
+╭────┬─────────────────────────────────┬───────╮
+│ id │              title              │ price │
+╞════╪═════════════════════════════════╪═══════╡
+│  9 │ 파이썬으로 시작하는 데이터 분석 │ 32000 │
+│ 13 │ 자료구조와 알고리즘 입문        │ 30000 │
+│  8 │ 처음 배우는 SQL                 │ 28000 │
+│ 12 │ 색채의 언어                     │ 24000 │
+│ 15 │ 바다의 제국                     │ 22000 │
+│  5 │ 세포의 시간                     │ 21000 │
+╰────┴─────────────────────────────────┴───────╯
+
+
+-- ─────────────────────────── 수정 / 삭제 ─────────────────────────
+
+-- [Q13] 반납 기한이 지났는데 아직 RENTED 인 대여를 OVERDUE 로 변경 (UPDATE)
+UPDATE rental
+SET status = 'OVERDUE'
+WHERE status = 'RENTED'
+  AND due_date < '2026-09-28';
+
+SELECT id, due_date, status FROM rental WHERE status = 'OVERDUE';
+╭────┬────────────┬─────────╮
+│ id │  due_date  │ status  │
+╞════╪════════════╪═════════╡
+│ 15 │ 2026-09-03 │ OVERDUE │
+│ 16 │ 2026-09-08 │ OVERDUE │
+│ 19 │ 2026-09-19 │ OVERDUE │
+│ 20 │ 2026-09-22 │ OVERDUE │
+╰────┴────────────┴─────────╯
+
+-- [Q14] 대여 기록이 없는 12번 회원 삭제 (DELETE)
+DELETE FROM member WHERE id = 12;
+
+SELECT COUNT(*) AS member_count FROM member;
+╭──────────────╮
+│ member_count │
+╞══════════════╡
+│           11 │
+╰──────────────╯
+
+
+-- ──────────────────────────── 인덱스 ────────────────────────────
+
+-- [Q15] rental.member_id 인덱스
+-- 이유: "회원별 대여 내역"을 찾을 때 member_id 로 자주 검색·조인하는데,
+--       FK 컬럼에는 인덱스가 자동으로 생기지 않아 전체 rental 을 훑게 되므로.
+EXPLAIN QUERY PLAN SELECT * FROM rental WHERE member_id = 1;   -- 생성 전
+QUERY PLAN
+`--SCAN rental
+
+CREATE INDEX idx_rental_member ON rental (member_id);
+
+EXPLAIN QUERY PLAN SELECT * FROM rental WHERE member_id = 1;   -- 생성 후
+QUERY PLAN
+`--SEARCH rental USING INDEX idx_rental_member (member_id=?)
